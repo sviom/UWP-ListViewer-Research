@@ -95,7 +95,7 @@ namespace ListScrollResearch
                 NowRenderedList.Add(dateTest);
             }
 
-            NowCount.Text = NowRenderedList.Count.ToString();            
+            NowCount.Text = NowRenderedList.Count.ToString();
         }
 
         /// <summary>
@@ -119,11 +119,6 @@ namespace ListScrollResearch
 
             NowCount.Text = "Now rendered items count : " + NowRenderedList.Count.ToString();
             ContentChangeTest.Text = "Top Item = " + NowRenderedList.OrderBy(x => x.Date).FirstOrDefault().Name;
-            
-        }
-
-        private void Page_EffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
-        {
 
         }
 

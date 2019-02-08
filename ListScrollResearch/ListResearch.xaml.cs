@@ -53,6 +53,11 @@ namespace ListScrollResearch
             this.Frame.Navigate(typeof(MainPage));
         }
 
+        /// <summary>
+        /// Content가 추가로 로딩될 때
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void TestListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             var ss = args.Handled;
@@ -71,31 +76,6 @@ namespace ListScrollResearch
             //Debug.WriteLine("------------------------------");
 
             CheckRecycleTest(ss1, ss2);
-            //args.RegisterUpdateCallback(this.CheckRecycleTest);
-            //args.Handled = true;
-        }
-
-        /// <summary>
-        /// 콜백
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        public void CheckRecycleTest(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            //Debug.WriteLine("IsRecycle : " + isRecycle.ToString() + "/ DateTest : " + dateTest.Name);
-            var dateTest = args.Item as DateTest;
-            if (args.InRecycleQueue)      // 다시 가상화 되는 상태
-            {
-                Debug.WriteLine("Removed");
-                NowRenderedList.Remove(dateTest);
-            }
-            else
-            {
-                Debug.WriteLine("Added");
-                NowRenderedList.Add(dateTest);
-            }
-
-            NowCount.Text = NowRenderedList.Count.ToString();
         }
 
         /// <summary>
@@ -105,15 +85,15 @@ namespace ListScrollResearch
         /// <param name="dateTest"></param>
         public void CheckRecycleTest(bool isRecycle, DateTest dateTest)
         {
-            Debug.WriteLine("IsRecycle : " + isRecycle.ToString() + "/ DateTest : " + dateTest.Name);
+            //Debug.WriteLine("IsRecycle : " + isRecycle.ToString() + "/ DateTest : " + dateTest.Name);
             if (isRecycle)      // 다시 가상화 되는 상태
             {
-                Debug.WriteLine("Removed");
+                //Debug.WriteLine("Removed");
                 NowRenderedList.Remove(dateTest);
             }
             else
             {
-                Debug.WriteLine("Added");
+                //Debug.WriteLine("Added");
                 NowRenderedList.Add(dateTest);
             }
 

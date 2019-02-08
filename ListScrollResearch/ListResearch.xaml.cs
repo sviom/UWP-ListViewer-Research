@@ -121,5 +121,38 @@ namespace ListScrollResearch
             ContentChangeTest.Text = "Top Item = " + NowRenderedList.OrderBy(x => x.Date).FirstOrDefault().Name;
             
         }
+
+        private void Page_EffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
+        {
+
+        }
+
+        /// <summary>
+        /// 나중에 데이터 더 추가하기 테스트
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddData_Click(object sender, RoutedEventArgs e)
+        {
+            DateGroup addedBeforeData = new DateGroup
+            {
+                Key = DateTime.Now.AddDays(-2).ToString()
+            };
+            DateGroup addedData = new DateGroup
+            {
+                Key = DateTime.Now.AddDays(2).ToString()
+            };
+
+            for (int i = 0; i < 100; i++)
+            {
+                addedData.Add(new DateTest() { Name = "new_test_" + i, Date = DateTime.Now.AddDays(1) });
+                addedBeforeData.Add(new DateTest() { Name = "new_before_test_" + i, Date = DateTime.Now.AddDays(1) });
+            }
+
+            DateTest.TestCasesGroup.Add(addedData);
+            DateTest.TestCasesGroup.Insert(0, addedBeforeData);
+
+            //DateTest.TestCasesGroup = DateTest.TestCasesGroup.OrderBy(x=>);
+        }
     }
 }

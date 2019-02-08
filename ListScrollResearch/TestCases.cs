@@ -19,9 +19,11 @@ namespace ListScrollResearch
 
         private int _testCount = 3000;
 
+        public static ObservableCollection<DateGroup> TestCasesGroup = new ObservableCollection<DateGroup>();
+
         public ObservableCollection<DateGroup> SetInitData()
         {
-            ObservableCollection<DateGroup> TestCasesGroup = new ObservableCollection<DateGroup>();
+            
 
             DateGroup now = new DateGroup
             {

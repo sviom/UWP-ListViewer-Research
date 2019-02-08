@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" EffectiveViewportChanged="Page_EffectiveViewportChanged">
 
     <Page.Resources>
         <CollectionViewSource x:Name="TestListViewCollection" IsSourceGrouped="True"></CollectionViewSource>
@@ -35,7 +35,10 @@
                 </GroupStyle>
             </ListView.GroupStyle>
         </ListView>
-        <Button x:Name="BackToMain" Click="BackToMain_Click">Back to Main page</Button>
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="BackToMain" Click="BackToMain_Click" Margin="0,0,20,0">Back to Main page</Button>
+            <Button x:Name="AddData" Click="AddData_Click">Add data</Button>
+        </StackPanel>        
         <TextBlock x:Name="ContentChangeTest"></TextBlock>
         <ListView ItemsSource="{x:Bind NowRenderedList}" Height="300">
             <ListView.ItemTemplate>

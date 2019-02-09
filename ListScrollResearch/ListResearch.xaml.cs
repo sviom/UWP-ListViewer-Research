@@ -54,6 +54,8 @@ namespace ListScrollResearch
             //        break;
             //    }
             //}
+
+            //GetOnlyDisplayedItems();
         }
 
         private void BackToMain_Click(object sender, RoutedEventArgs e)
@@ -75,15 +77,17 @@ namespace ListScrollResearch
             var ss4 = args.ItemIndex;
             var ss5 = args.Phase;
 
-            Debug.WriteLine(ss);
-            Debug.WriteLine(ss1);
-            Debug.WriteLine(ss2.Name);
-            Debug.WriteLine(ss3);
-            Debug.WriteLine(ss4);
-            Debug.WriteLine(ss5);
-            Debug.WriteLine("------------------------------");
+            //Debug.WriteLine(ss);
+            //Debug.WriteLine(ss1);
+            //Debug.WriteLine(ss2.Name);
+            //Debug.WriteLine(ss3);
+            //Debug.WriteLine(ss4);
+            //Debug.WriteLine(ss5);
+            //Debug.WriteLine("------------------------------");
 
             CheckRecycleTest(ss1, ss2);
+
+            GetOnlyDisplayedItems();
         }
 
         /// <summary>
@@ -106,12 +110,12 @@ namespace ListScrollResearch
             }
 
             NowCount.Text = "Now rendered items count : " + NowRenderedList.Count.ToString();
-            ContentChangeTest.Text = "Top Item = " + NowRenderedList.OrderBy(x => x.Date).FirstOrDefault().Name;
+            
 
             // PointerWheelChagnedEvent 가 발생하지 않으므로 Container에서 검색해서 Index가 ItemSource의 Count와 같으면 맨 끝으로 간주
             var renderedLastItem = NowRenderedList.OrderBy(x => x.Name).LastOrDefault();
             var endItem = DateTests.LastOrDefault().LastOrDefault() as DateTest;
-            if(renderedLastItem == endItem)
+            if (renderedLastItem == endItem)
             {
                 AddNewData();
             }
@@ -182,6 +186,53 @@ namespace ListScrollResearch
                 };
                 OtherControl.Items.Add(_block);
             }
+        }
+
+        private bool IsVisibileToUser(FrameworkElement element, FrameworkElement container)
+        {
+            if (element == null || container == null)
+                return false;
+
+
+            Rect elementBounds = element.TransformToVisual(container).TransformBounds(new Rect(0.0, 0.0, element.ActualWidth, element.ActualHeight));
+            Rect containerBounds = new Rect(0.0, 0.0, container.ActualWidth, container.ActualHeight);
+
+            return (elementBounds.Left < containerBounds.Right && elementBounds.Right > containerBounds.Left);
+        }
+
+        private void TestListView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ListViewItem element = TestListView.Items[TestListView.Items.Count - 1] as ListViewItem;
+            var ret = IsVisibileToUser(element, TestListView);
+            Debug.WriteLine(ret);
+        }
+
+
+        public void GetOnlyDisplayedItems()
+        {
+            var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
+            var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
+
+            var scrollViewerOffset = _scrollViewer.VerticalOffset;       // 현재 스크롤 위치
+
+            var item = TestListView.ContainerFromIndex(0) as ListViewItem;
+            if (item != null)
+            {
+                var _listViewItemHeight = item.ActualHeight;
+
+                var offset = scrollViewerOffset;
+                var itemLocation = Math.Floor(scrollViewerOffset / _listViewItemHeight) - 1;
+
+                //Debug.WriteLine("Now Offset : " + offset);
+                //Debug.WriteLine("Now Name : " + itemLocation);
+
+                ContentChangeTest.Text = "Now location : " + itemLocation;
+            }
+        }
+
+        private void ListView_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            Debug.WriteLine("Changed");
         }
     }
 }

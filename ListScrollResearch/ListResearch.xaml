@@ -11,17 +11,20 @@
     <Page.Resources>
         <CollectionViewSource x:Name="TestListViewCollection" IsSourceGrouped="True"></CollectionViewSource>
     </Page.Resources>
-    
+
     <StackPanel>
-        <ListView x:Name="TestListView" ItemsSource="{x:Bind TestListViewCollection.View}" Height="300"
+        <ListView x:Name="TestListView" ItemsSource="{x:Bind TestListViewCollection.View}"
+                  Height="300"
                   ContainerContentChanging="TestListView_ContainerContentChanging"
-                  Loaded="TestListView_Loaded">
+                  Loaded="TestListView_Loaded"
+                  SelectionChanged="TestListView_SelectionChanged"
+                  ShowsScrollingPlaceholders="True">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:DateTest">
                     <StackPanel>
                         <!--<TextBlock Text="{Binding Date}"></TextBlock>-->
                         <TextBlock Text="{Binding Name}"></TextBlock>
-                    </StackPanel>                    
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
 
@@ -38,9 +41,9 @@
         <StackPanel Orientation="Horizontal">
             <Button x:Name="BackToMain" Click="BackToMain_Click" Margin="0,0,20,0">Back to Main page</Button>
             <Button x:Name="AddData" Click="AddData_Click">Add data</Button>
-        </StackPanel>        
+        </StackPanel>
         <TextBlock x:Name="ContentChangeTest"></TextBlock>
-        <ListView ItemsSource="{x:Bind NowRenderedList}" Height="300">
+        <ListView ItemsSource="{x:Bind NowRenderedList}" Height="200">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"></TextBlock>
@@ -48,5 +51,7 @@
             </ListView.ItemTemplate>
         </ListView>
         <TextBlock x:Name="NowCount"></TextBlock>
+
+        <GridView x:Name="OtherControl" ></GridView>
     </StackPanel>
 </Page>

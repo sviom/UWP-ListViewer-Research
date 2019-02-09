@@ -24,28 +24,36 @@ namespace ListScrollResearch
     /// </summary>
     public sealed partial class ListResearch : Page
     {
-        public ObservableCollection<DateTest> DateTests { get; set; }
+        public ObservableCollection<DateGroup> DateTests { get; set; }
         public ObservableCollection<DateTest> NowRenderedList { get; set; } = new ObservableCollection<DateTest>();
 
         public ListResearch()
         {
             this.InitializeComponent();
+            TestListView.PointerWheelChanged += TestListView_PointerWheelChanged;
             //NowRenderedList = new List<DateTest>();
-            TestListViewCollection.Source = new DateTest().SetInitData();
+            DateTests = new DateTest().SetInitData();
+            TestListViewCollection.Source = DateTests;
+            SetGridViewTestData(DateTests);
+        }
+
+        private void TestListView_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            //throw new NotImplementedException();
         }
 
         private void TestListView_Loaded(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < TestListView.Items.Count; i++)
-            {
-                var nowDateTest = TestListView.Items[i] as DateTest;
-                if (nowDateTest.Date.Date == DateTimeOffset.Now.Date)
-                {
-                    TestListView.SelectedIndex = i;
-                    TestListView.ScrollIntoView(TestListView.Items[i]);
-                    break;
-                }
-            }
+            //for (int i = 0; i < TestListView.Items.Count; i++)
+            //{
+            //    var nowDateTest = TestListView.Items[i] as DateTest;
+            //    if (nowDateTest.Date.Date == DateTimeOffset.Now.Date)
+            //    {
+            //        TestListView.SelectedIndex = i;
+            //        TestListView.ScrollIntoView(TestListView.Items[i]);
+            //        break;
+            //    }
+            //}
         }
 
         private void BackToMain_Click(object sender, RoutedEventArgs e)
@@ -67,15 +75,23 @@ namespace ListScrollResearch
             var ss4 = args.ItemIndex;
             var ss5 = args.Phase;
 
-            //Debug.WriteLine(ss);
-            //Debug.WriteLine(ss1);
-            //Debug.WriteLine(ss2.Name);
-            //Debug.WriteLine(ss3);
-            //Debug.WriteLine(ss4);
-            //Debug.WriteLine(ss5);
-            //Debug.WriteLine("------------------------------");
+            Debug.WriteLine(ss);
+            Debug.WriteLine(ss1);
+            Debug.WriteLine(ss2.Name);
+            Debug.WriteLine(ss3);
+            Debug.WriteLine(ss4);
+            Debug.WriteLine(ss5);
+            Debug.WriteLine("------------------------------");
 
-            CheckRecycleTest(ss1, ss2);
+            try
+            {
+                CheckRecycleTest(ss1, ss2);
+            }
+            catch(Exception ex)
+            {
+
+            }
+            
         }
 
         /// <summary>
@@ -100,6 +116,13 @@ namespace ListScrollResearch
             NowCount.Text = "Now rendered items count : " + NowRenderedList.Count.ToString();
             ContentChangeTest.Text = "Top Item = " + NowRenderedList.OrderBy(x => x.Date).FirstOrDefault().Name;
 
+            // PointerWheelChagnedEvent 가 발생하지 않으므로 Container에서 검색해서 Index가 ItemSource의 Count와 같으면 맨 끝으로 간주
+            var renderedLastItem = NowRenderedList.OrderBy(x => x.Name).LastOrDefault();
+            var endItem = DateTests.LastOrDefault().LastOrDefault() as DateTest;
+            if(renderedLastItem == endItem)
+            {
+                AddNewData();
+            }
         }
 
         /// <summary>
@@ -108,6 +131,13 @@ namespace ListScrollResearch
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void AddData_Click(object sender, RoutedEventArgs e)
+        {
+            AddNewData();
+
+            //DateTest.TestCasesGroup = DateTest.TestCasesGroup.OrderBy(x=>);
+        }
+
+        private void AddNewData()
         {
             DateGroup addedBeforeData = new DateGroup
             {
@@ -126,8 +156,40 @@ namespace ListScrollResearch
 
             DateTest.TestCasesGroup.Add(addedData);
             DateTest.TestCasesGroup.Insert(0, addedBeforeData);
+        }
 
-            //DateTest.TestCasesGroup = DateTest.TestCasesGroup.OrderBy(x=>);
+        /// <summary>
+        /// 선택 시 다른 이벤트로 이벤트 전달
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TestListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedItem = (sender as ListView).SelectedItem as DateTest;
+            var selectedItemDate = selectedItem.Date;
+            //OtherControl.SelectionChanged += OtherControl_SelectionChanged;
+        }
+
+        private void OtherControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //throw new NotImplementedException();
+
+        }
+
+        /// <summary>
+        /// 다른 컨트롤
+        /// </summary>
+        /// <param name="dateGroups"></param>
+        public void SetGridViewTestData(ObservableCollection<DateGroup> dateGroups)
+        {
+            foreach (var item in dateGroups)
+            {
+                TextBlock _block = new TextBlock
+                {
+                    Text = item.GroupName
+                };
+                OtherControl.Items.Add(_block);
+            }
         }
     }
 }

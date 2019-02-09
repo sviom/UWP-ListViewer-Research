@@ -18,6 +18,8 @@ namespace ListScrollResearch
 
         public static ObservableCollection<DateGroup> TestCasesGroup = new ObservableCollection<DateGroup>();
 
+        public static List<DateTest> RawTestCases = new List<DateTest>();
+
         public ObservableCollection<DateGroup> SetInitData()
         {
             
@@ -45,14 +47,17 @@ namespace ListScrollResearch
                 if (i < (_testCount / 3))
                 {
                     before.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now.AddDays(-1) });
+                    RawTestCases.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now.AddDays(-1) });
                 }
                 else if (i > (_testCount / 3 - 1) && i < (_testCount / 2))
                 {
                     now.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now });
+                    RawTestCases.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now });
                 }
                 else
                 {
                     after.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now.AddDays(1) });
+                    RawTestCases.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now.AddDays(1) });
                 }
             }
 

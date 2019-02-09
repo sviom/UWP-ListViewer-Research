@@ -31,7 +31,7 @@ namespace ListScrollResearch
         {
             this.InitializeComponent();
             TestListView.PointerWheelChanged += TestListView_PointerWheelChanged;
-            //NowRenderedList = new List<DateTest>();
+            
             DateTests = new DateTest().SetInitData();
             TestListViewCollection.Source = DateTests;
             SetGridViewTestData(DateTests);
@@ -215,18 +215,22 @@ namespace ListScrollResearch
 
             var scrollViewerOffset = _scrollViewer.VerticalOffset;       // 현재 스크롤 위치
 
-            var item = TestListView.ContainerFromIndex(0) as ListViewItem;
-            if (item != null)
+            if (TestListView.ContainerFromIndex(0) is ListViewItem item)
             {
                 var _listViewItemHeight = item.ActualHeight;
 
                 var offset = scrollViewerOffset;
-                var itemLocation = Math.Floor(scrollViewerOffset / _listViewItemHeight) - 1;
+
+                double itemLocation = 0;
+                if (scrollViewerOffset == 0 && _listViewItemHeight == 0)
+                    itemLocation = 0;
+                else
+                    itemLocation = Math.Floor(scrollViewerOffset / _listViewItemHeight);
 
                 //Debug.WriteLine("Now Offset : " + offset);
                 //Debug.WriteLine("Now Name : " + itemLocation);
 
-                ContentChangeTest.Text = "Now location : " + itemLocation;
+                ContentChangeTest.Text = "Now location : " + itemLocation + " / " + "Now item : " + DateTest.RawTestCases[Convert.ToInt32(itemLocation)].Name;
             }
         }
 

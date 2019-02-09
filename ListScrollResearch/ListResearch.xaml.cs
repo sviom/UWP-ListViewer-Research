@@ -83,15 +83,7 @@ namespace ListScrollResearch
             Debug.WriteLine(ss5);
             Debug.WriteLine("------------------------------");
 
-            try
-            {
-                CheckRecycleTest(ss1, ss2);
-            }
-            catch(Exception ex)
-            {
-
-            }
-            
+            CheckRecycleTest(ss1, ss2);
         }
 
         /// <summary>

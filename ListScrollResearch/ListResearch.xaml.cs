@@ -32,6 +32,8 @@ namespace ListScrollResearch
         public ObservableCollection<DateTest> NowRenderedList { get; set; } = new ObservableCollection<DateTest>();
 
         public List<ListViewItem> RenderedItemList = new List<ListViewItem>();
+        public List<ListViewHeaderItem> AllListViewHeaderItems { get; set; } = new List<ListViewHeaderItem>();
+        public List<ListViewHeaderItem> DisplayedHeaderItems { get; set; } = new List<ListViewHeaderItem>();
 
         public ListResearch()
         {
@@ -63,7 +65,7 @@ namespace ListScrollResearch
 
             CheckRecycleRenderedList(ss1, ss2, ss3);            // Now Rendered list
 
-            //OnlyDisplayedItem();
+            OnlyDisplayedHeaderItem();
         }
 
         /// <summary>
@@ -128,116 +130,56 @@ namespace ListScrollResearch
             DateTest.TestCasesGroup.Insert(0, addedBeforeData);
         }
 
-        public void OnlyDisplayedItem()
+        public void OnlyDisplayedHeaderItem()
         {
+            ContentChangeTest.Text = string.Empty;
+
             var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
             var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
 
-            //foreach (var item in TestListView.Items)
-            //{
-            //    if (TestListView.ContainerFromItem(item) is ListViewItem viewItem)
-            //    {
-            //        //var viewItem = TestListView.ContainerFromItem(item) as ListViewItem;
-            //        var viewProperties = viewItem.GetType().GetProperties();
-            //        var classItem = item as DateTest;
+            EnumVisual(_scrollViewer);      // ScrollView의 자식 Component 찾기
 
-            //        foreach (var property in viewProperties)
-            //        {
-            //            if (property.Name.Contains("RenderTransform"))
-            //            {
-            //                var propertyValue = property.GetValue(viewItem);
-            //                Debug.WriteLine("RenderTransform : " + propertyValue + " / Item : " + classItem.Name);
-            //            }
-            //            else if (property.Name.Contains("matrixTransform"))
-            //            {
-            //                Debug.WriteLine("Maxtrix : " + classItem.Name);
-            //            }
-            //        }
-            //    }
-            //}
-
-            //return;
-
-            var verticalOffset = _scrollViewer.VerticalOffset;       // 현재 스크롤 위치
-            Debug.WriteLine("Vertical Offset : " + verticalOffset);
-
-            EnumVisual(_scrollViewer);
-
-            var firstItemProperties = ddd[0].GetType().GetProperties();
-            var secondItemProperties = ddd[1].GetType().GetProperties();
-
-            List<object> fir = new List<object>();
-            List<object> sec = new List<object>();
-            string aa = "";
-            string bb = "";
-            for (int i = 0; i < firstItemProperties.Length; i++)
+            foreach (var item in AllListViewHeaderItems)
             {
-                var firstValue = firstItemProperties[i].GetValue(ddd[0]);
-                var secondValue = secondItemProperties[i].GetValue(ddd[1]);
-                Debug.WriteLine("first : " + firstValue + " / " + "second : " + secondValue);
-
-                fir.Add(firstValue);
-                sec.Add(secondValue);
-
-                aa += firstValue?.ToString() + Environment.NewLine;
-                bb += secondValue?.ToString() + Environment.NewLine;
+                if(item.RenderTransform is MatrixTransform)
+                {
+                    DisplayedHeaderItems.Remove(item);
+                }
+                else if(item.RenderTransform is CompositeTransform)
+                {
+                    DisplayedHeaderItems.Add(item);
+                }
+                //var itemProperties = item.GetType().GetProperties();
+                //foreach (var propertyItem in itemProperties)
+                //{
+                //    Debug.WriteLine("Property : " + propertyItem.Name);
+                //    if (propertyItem.Name.Equals("RenderTransform"))
+                //    {
+                //        var transForm = propertyItem.GetValue(item).ToString();
+                //        if (transForm.Contains("CompositeTransform"))
+                //        {
+                //            Debug.WriteLine("Composit Property : " + transForm.ToString());
+                           
+                //        }
+                //        else if (transForm.Contains("MatrixTransform"))
+                //        {
+                            
+                //        }
+                //    }
+                //}
             }
 
-            Debug.WriteLine(ddd);
+            AllListViewHeaderItems.Clear();
 
-            double tessss = 0;
-            List<ListViewItem> testlist = new List<ListViewItem>();
-            for (int i = 0; i < TestListView.Items.Count; i++)
+            foreach (var item in DisplayedHeaderItems)
             {
-                if (TestListView.ContainerFromIndex(i) is ListViewItem container)
-                {
-                    testlist.Add(container);
-                    tessss += container.ActualHeight;
-                }
-            }
-
-            ContentChangeTest.Text = "Vertical Offset : " + verticalOffset + " / Rendered Height" + tessss + " / ViewPort : " + _scrollViewer.ViewportHeight;
-
-            return;
-
-            double topItemOffset = 0.0;                            // Top Item offset
-            //TestListViewCollection.Source
-            for (int i = 0; i < TestListView.Items.Count; i++)
-            {
-                var tempItem = TestListView.Items[i] as DateTest;
-                var container = TestListView.ContainerFromIndex(i) as ListViewItem;
-
-                if (NowRenderedList.Count > 1)
-                {
-                    if (NowRenderedList[1] == tempItem)      // Rendered List의 0번째 아이템은 항상 Index 0 아이템 고정
-                        break;
-                    else
-                        topItemOffset += container.ActualHeight;
-                }
-                else
-                    topItemOffset += container.ActualHeight;
-            }
-            Debug.WriteLine("Top Item Offset : " + topItemOffset);
-            Debug.WriteLine("VO - TIO = " + (verticalOffset - topItemOffset));
-
-            int visibleItemIndex = 0;
-            double tempActualHeight = 0;
-            foreach (var renderedItem in RenderedItemList)
-            {
-                var offsetCompare = (int)Math.Floor(verticalOffset - topItemOffset);
-                if (tempActualHeight == (offsetCompare - offsetCompare % 10))
-                {
-                    ContentChangeTest.Text = "Now location : " + NowRenderedList[visibleItemIndex].Name;
-                    break;      // 해당 아이템 다음 아이템이 Displayed Item                
-                }
-                tempActualHeight += renderedItem.ActualHeight;
-                visibleItemIndex++;
+                ContentChangeTest.Text += item.Name + " / ";
             }
         }
 
         private void NowTopItem_Click(object sender, RoutedEventArgs e)
         {
-            OnlyDisplayedItem();
+            OnlyDisplayedHeaderItem();
         }
 
         #region GridView 영역
@@ -263,9 +205,8 @@ namespace ListScrollResearch
         }
         #endregion
 
-        public static List<ListViewHeaderItem> ddd = new List<ListViewHeaderItem>();
         // Enumerate all the descendants of the visual object.
-        static public void EnumVisual(DependencyObject myVisual)
+        public void EnumVisual(DependencyObject myVisual)
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(myVisual); i++)
             {
@@ -275,7 +216,7 @@ namespace ListScrollResearch
                 // Do processing of the child visual object.
                 if (childVisual is ListViewHeaderItem headerItem)
                 {
-                    ddd.Add(headerItem);
+                    AllListViewHeaderItems.Add(headerItem);
                 }
 
                 // Enumerate children of the child visual object.

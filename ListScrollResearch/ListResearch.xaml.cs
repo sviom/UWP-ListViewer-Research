@@ -27,35 +27,15 @@ namespace ListScrollResearch
         public ObservableCollection<DateGroup> DateTests { get; set; }
         public ObservableCollection<DateTest> NowRenderedList { get; set; } = new ObservableCollection<DateTest>();
 
+        public List<ListViewItem> RenderedItemList = new List<ListViewItem>();
+
         public ListResearch()
         {
             this.InitializeComponent();
-            TestListView.PointerWheelChanged += TestListView_PointerWheelChanged;
-            
+
             DateTests = new DateTest().SetInitData();
             TestListViewCollection.Source = DateTests;
             SetGridViewTestData(DateTests);
-        }
-
-        private void TestListView_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
-
-        private void TestListView_Loaded(object sender, RoutedEventArgs e)
-        {
-            //for (int i = 0; i < TestListView.Items.Count; i++)
-            //{
-            //    var nowDateTest = TestListView.Items[i] as DateTest;
-            //    if (nowDateTest.Date.Date == DateTimeOffset.Now.Date)
-            //    {
-            //        TestListView.SelectedIndex = i;
-            //        TestListView.ScrollIntoView(TestListView.Items[i]);
-            //        break;
-            //    }
-            //}
-
-            //GetOnlyDisplayedItems();
         }
 
         private void BackToMain_Click(object sender, RoutedEventArgs e)
@@ -73,21 +53,13 @@ namespace ListScrollResearch
             var ss = args.Handled;
             var ss1 = args.InRecycleQueue;
             var ss2 = args.Item as DateTest;
-            var ss3 = args.ItemContainer;
+            var ss3 = args.ItemContainer as ListViewItem;
             var ss4 = args.ItemIndex;
             var ss5 = args.Phase;
 
-            //Debug.WriteLine(ss);
-            //Debug.WriteLine(ss1);
-            //Debug.WriteLine(ss2.Name);
-            //Debug.WriteLine(ss3);
-            //Debug.WriteLine(ss4);
-            //Debug.WriteLine(ss5);
-            //Debug.WriteLine("------------------------------");
+            CheckRecycleRenderedList(ss1, ss2, ss3);            // Now Rendered list
 
-            CheckRecycleTest(ss1, ss2);
-
-            GetOnlyDisplayedItems();
+            //OnlyDisplayedItem();
         }
 
         /// <summary>
@@ -95,29 +67,27 @@ namespace ListScrollResearch
         /// </summary>
         /// <param name="isRecycle"></param>
         /// <param name="dateTest"></param>
-        public void CheckRecycleTest(bool isRecycle, DateTest dateTest)
+        public void CheckRecycleRenderedList(bool isRecycle, DateTest dateTest, ListViewItem nowItem)
         {
-            //Debug.WriteLine("IsRecycle : " + isRecycle.ToString() + "/ DateTest : " + dateTest.Name);
             if (isRecycle)      // 다시 가상화 되는 상태
             {
-                //Debug.WriteLine("Removed");
                 NowRenderedList.Remove(dateTest);
+                RenderedItemList.Remove(nowItem);
             }
             else
             {
-                //Debug.WriteLine("Added");
                 NowRenderedList.Add(dateTest);
+                RenderedItemList.Add(nowItem);
             }
 
             NowCount.Text = "Now rendered items count : " + NowRenderedList.Count.ToString();
-            
 
             // PointerWheelChagnedEvent 가 발생하지 않으므로 Container에서 검색해서 Index가 ItemSource의 Count와 같으면 맨 끝으로 간주
             var renderedLastItem = NowRenderedList.OrderBy(x => x.Name).LastOrDefault();
             var endItem = DateTests.LastOrDefault().LastOrDefault() as DateTest;
             if (renderedLastItem == endItem)
             {
-                AddNewData();
+                //AddNewData();
             }
         }
 
@@ -154,26 +124,77 @@ namespace ListScrollResearch
             DateTest.TestCasesGroup.Insert(0, addedBeforeData);
         }
 
-        /// <summary>
-        /// 선택 시 다른 이벤트로 이벤트 전달
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TestListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void OnlyDisplayedItem()
         {
-            var selectedItem = (sender as ListView).SelectedItem as DateTest;
-            var selectedItemDate = selectedItem.Date;
-            //OtherControl.SelectionChanged += OtherControl_SelectionChanged;
+            var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
+            var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
+
+            var verticalOffset = _scrollViewer.VerticalOffset;       // 현재 스크롤 위치
+            Debug.WriteLine("Vertical Offset : " + verticalOffset);
+
+            double tessss = 0;
+            List<ListViewItem> testlist = new List<ListViewItem>();
+            for (int i = 0; i < TestListView.Items.Count; i++)
+            {
+                if (TestListView.ContainerFromIndex(i) is ListViewItem container)
+                {
+                    testlist.Add(container);
+                    tessss += container.ActualHeight;
+                }
+            }
+
+            ContentChangeTest.Text = "Vertical Offset : " + verticalOffset + " / Rendered Height" + tessss + " / ViewPort : " + _scrollViewer.ViewportHeight;
+
+            return;
+
+            double topItemOffset = 0.0;                            // Top Item offset
+            //TestListViewCollection.Source
+            for (int i = 0; i < TestListView.Items.Count; i++)
+            {
+                var tempItem = TestListView.Items[i] as DateTest;
+                var container = TestListView.ContainerFromIndex(i) as ListViewItem;
+
+                if (NowRenderedList.Count > 1)
+                {
+                    if (NowRenderedList[1] == tempItem)      // Rendered List의 0번째 아이템은 항상 Index 0 아이템 고정
+                        break;
+                    else
+                        topItemOffset += container.ActualHeight;
+                }
+                else
+                    topItemOffset += container.ActualHeight;
+            }
+            Debug.WriteLine("Top Item Offset : " + topItemOffset);
+            Debug.WriteLine("VO - TIO = " + (verticalOffset - topItemOffset));
+
+            int visibleItemIndex = 0;
+            double tempActualHeight = 0;
+            foreach (var renderedItem in RenderedItemList)
+            {
+                var offsetCompare = (int)Math.Floor(verticalOffset - topItemOffset);
+                if (tempActualHeight == (offsetCompare - offsetCompare % 10))
+                {
+                    ContentChangeTest.Text = "Now location : " + NowRenderedList[visibleItemIndex].Name;
+                    break;      // 해당 아이템 다음 아이템이 Displayed Item                
+                }
+                tempActualHeight += renderedItem.ActualHeight;
+                visibleItemIndex++;
+            }
         }
 
+        private void NowTopItem_Click(object sender, RoutedEventArgs e)
+        {
+            OnlyDisplayedItem();
+        }
+
+        #region GridView 영역
         private void OtherControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //throw new NotImplementedException();
-
+            var aa = sender as GridViewItem;
         }
 
         /// <summary>
-        /// 다른 컨트롤
+        /// 그리드 뷰에 Group Header만 추가
         /// </summary>
         /// <param name="dateGroups"></param>
         public void SetGridViewTestData(ObservableCollection<DateGroup> dateGroups)
@@ -187,56 +208,6 @@ namespace ListScrollResearch
                 OtherControl.Items.Add(_block);
             }
         }
-
-        private bool IsVisibileToUser(FrameworkElement element, FrameworkElement container)
-        {
-            if (element == null || container == null)
-                return false;
-
-
-            Rect elementBounds = element.TransformToVisual(container).TransformBounds(new Rect(0.0, 0.0, element.ActualWidth, element.ActualHeight));
-            Rect containerBounds = new Rect(0.0, 0.0, container.ActualWidth, container.ActualHeight);
-
-            return (elementBounds.Left < containerBounds.Right && elementBounds.Right > containerBounds.Left);
-        }
-
-        private void TestListView_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            ListViewItem element = TestListView.Items[TestListView.Items.Count - 1] as ListViewItem;
-            var ret = IsVisibileToUser(element, TestListView);
-            Debug.WriteLine(ret);
-        }
-
-
-        public void GetOnlyDisplayedItems()
-        {
-            var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
-            var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
-
-            var scrollViewerOffset = _scrollViewer.VerticalOffset;       // 현재 스크롤 위치
-
-            if (TestListView.ContainerFromIndex(0) is ListViewItem item)
-            {
-                var _listViewItemHeight = item.ActualHeight;
-
-                var offset = scrollViewerOffset;
-
-                double itemLocation = 0;
-                if (scrollViewerOffset == 0 && _listViewItemHeight == 0)
-                    itemLocation = 0;
-                else
-                    itemLocation = Math.Floor(scrollViewerOffset / _listViewItemHeight);
-
-                //Debug.WriteLine("Now Offset : " + offset);
-                //Debug.WriteLine("Now Name : " + itemLocation);
-
-                ContentChangeTest.Text = "Now location : " + itemLocation + " / " + "Now item : " + DateTest.RawTestCases[Convert.ToInt32(itemLocation)].Name;
-            }
-        }
-
-        private void ListView_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-        {
-            Debug.WriteLine("Changed");
-        }
+        #endregion
     }
 }

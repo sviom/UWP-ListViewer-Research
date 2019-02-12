@@ -85,5 +85,6 @@ namespace ListScrollResearch
     {
         public object Key { get; set; }
         public string GroupName { get; set; }
+        public DateTimeOffset GroupHeader { get; set; }
     }
 }

@@ -14,20 +14,17 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
         
         <ListView x:Name="TestListView" ItemsSource="{x:Bind TestListViewCollection.View}"
                   Grid.Row="0"
-                  ContainerContentChanging="TestListView_ContainerContentChanging"
-                  Loaded="TestListView_Loaded"
-                  SelectionChanged="TestListView_SelectionChanged"
-                  SizeChanged="TestListView_SizeChanged">
+                  ContainerContentChanging="TestListView_ContainerContentChanging">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:DateTest">
                     <StackPanel>
@@ -49,11 +46,11 @@
         </ListView>
         <StackPanel Orientation="Horizontal" Grid.Row="1">
             <Button x:Name="BackToMain" Click="BackToMain_Click" Margin="0,0,20,0">Back to Main page</Button>
-            <Button x:Name="AddData" Click="AddData_Click">Add data</Button>
+            <Button x:Name="AddData" Click="AddData_Click" Margin="0,0,20,0">Add data</Button>
+            <Button x:Name="NowTopItem" Click="NowTopItem_Click">Now Top item</Button>
         </StackPanel>
         <TextBlock x:Name="ContentChangeTest" Grid.Row="2"></TextBlock>
-        <ListView ItemsSource="{x:Bind NowRenderedList}" Grid.Row="3"
-                  PointerWheelChanged="ListView_PointerWheelChanged">
+        <ListView ItemsSource="{x:Bind NowRenderedList}" Grid.Row="3">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"></TextBlock>
@@ -61,7 +58,6 @@
             </ListView.ItemTemplate>
         </ListView>
         <TextBlock x:Name="NowCount" Grid.Row="4"></TextBlock>
-
         <GridView x:Name="OtherControl" Grid.Row="5"></GridView>
     </Grid>
 </Page>

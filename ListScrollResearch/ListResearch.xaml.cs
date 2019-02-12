@@ -132,7 +132,9 @@ namespace ListScrollResearch
 
         public void OnlyDisplayedHeaderItem()
         {
-            ContentChangeTest.Text = string.Empty;
+            AllListViewHeaderItems = new List<ListViewHeaderItem>();
+            DisplayedHeaderItems = new List<ListViewHeaderItem>();
+            ContentChangeTest.Text = "";
 
             var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
             var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
@@ -141,40 +143,21 @@ namespace ListScrollResearch
 
             foreach (var item in AllListViewHeaderItems)
             {
-                if(item.RenderTransform is MatrixTransform)
+                if (item.RenderTransform is MatrixTransform)
                 {
                     DisplayedHeaderItems.Remove(item);
                 }
-                else if(item.RenderTransform is CompositeTransform)
+                else if (item.RenderTransform is CompositeTransform)
                 {
                     DisplayedHeaderItems.Add(item);
                 }
-                //var itemProperties = item.GetType().GetProperties();
-                //foreach (var propertyItem in itemProperties)
-                //{
-                //    Debug.WriteLine("Property : " + propertyItem.Name);
-                //    if (propertyItem.Name.Equals("RenderTransform"))
-                //    {
-                //        var transForm = propertyItem.GetValue(item).ToString();
-                //        if (transForm.Contains("CompositeTransform"))
-                //        {
-                //            Debug.WriteLine("Composit Property : " + transForm.ToString());
-                           
-                //        }
-                //        else if (transForm.Contains("MatrixTransform"))
-                //        {
-                            
-                //        }
-                //    }
-                //}
             }
-
-            AllListViewHeaderItems.Clear();
 
             foreach (var item in DisplayedHeaderItems)
             {
-                ContentChangeTest.Text += item.Name + " / ";
-            }
+                var ss = EnumVisual<TextBlock>(item);
+                ContentChangeTest.Text += ss?.Text + " / ";
+            }            
         }
 
         private void NowTopItem_Click(object sender, RoutedEventArgs e)
@@ -216,12 +199,37 @@ namespace ListScrollResearch
                 // Do processing of the child visual object.
                 if (childVisual is ListViewHeaderItem headerItem)
                 {
-                    AllListViewHeaderItems.Add(headerItem);
+                    if(!AllListViewHeaderItems.Contains(headerItem))
+                        AllListViewHeaderItems.Add(headerItem);
                 }
 
                 // Enumerate children of the child visual object.
                 EnumVisual(childVisual);
             }
+        }
+
+        public T EnumVisual<T>(DependencyObject myVisual) where T: class
+        {
+            T reValue = null;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(myVisual); i++)
+            {
+                // Retrieve child visual at specified index value.
+                DependencyObject childVisual = VisualTreeHelper.GetChild(myVisual, i);
+
+                // Do processing of the child visual object.
+                if (childVisual is T headerItem)
+                {
+                    return headerItem;
+                }
+
+                // Enumerate children of the child visual object.
+                reValue = EnumVisual<T>(childVisual);
+                if (reValue != null)
+                    break;
+            }
+
+            return reValue;
         }
     }
 }

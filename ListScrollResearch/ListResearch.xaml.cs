@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -14,6 +16,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+
+using Newtonsoft.Json;
 
 // 빈 페이지 항목 템플릿에 대한 설명은 https://go.microsoft.com/fwlink/?LinkId=234238에 나와 있습니다.
 
@@ -129,8 +133,57 @@ namespace ListScrollResearch
             var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
             var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
 
+            //foreach (var item in TestListView.Items)
+            //{
+            //    if (TestListView.ContainerFromItem(item) is ListViewItem viewItem)
+            //    {
+            //        //var viewItem = TestListView.ContainerFromItem(item) as ListViewItem;
+            //        var viewProperties = viewItem.GetType().GetProperties();
+            //        var classItem = item as DateTest;
+
+            //        foreach (var property in viewProperties)
+            //        {
+            //            if (property.Name.Contains("RenderTransform"))
+            //            {
+            //                var propertyValue = property.GetValue(viewItem);
+            //                Debug.WriteLine("RenderTransform : " + propertyValue + " / Item : " + classItem.Name);
+            //            }
+            //            else if (property.Name.Contains("matrixTransform"))
+            //            {
+            //                Debug.WriteLine("Maxtrix : " + classItem.Name);
+            //            }
+            //        }
+            //    }
+            //}
+
+            //return;
+
             var verticalOffset = _scrollViewer.VerticalOffset;       // 현재 스크롤 위치
             Debug.WriteLine("Vertical Offset : " + verticalOffset);
+
+            EnumVisual(_scrollViewer);
+
+            var firstItemProperties = ddd[0].GetType().GetProperties();
+            var secondItemProperties = ddd[1].GetType().GetProperties();
+
+            List<object> fir = new List<object>();
+            List<object> sec = new List<object>();
+            string aa = "";
+            string bb = "";
+            for (int i = 0; i < firstItemProperties.Length; i++)
+            {
+                var firstValue = firstItemProperties[i].GetValue(ddd[0]);
+                var secondValue = secondItemProperties[i].GetValue(ddd[1]);
+                Debug.WriteLine("first : " + firstValue + " / " + "second : " + secondValue);
+
+                fir.Add(firstValue);
+                sec.Add(secondValue);
+
+                aa += firstValue?.ToString() + Environment.NewLine;
+                bb += secondValue?.ToString() + Environment.NewLine;
+            }
+
+            Debug.WriteLine(ddd);
 
             double tessss = 0;
             List<ListViewItem> testlist = new List<ListViewItem>();
@@ -209,5 +262,25 @@ namespace ListScrollResearch
             }
         }
         #endregion
+
+        public static List<ListViewHeaderItem> ddd = new List<ListViewHeaderItem>();
+        // Enumerate all the descendants of the visual object.
+        static public void EnumVisual(DependencyObject myVisual)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(myVisual); i++)
+            {
+                // Retrieve child visual at specified index value.
+                DependencyObject childVisual = VisualTreeHelper.GetChild(myVisual, i);
+
+                // Do processing of the child visual object.
+                if (childVisual is ListViewHeaderItem headerItem)
+                {
+                    ddd.Add(headerItem);
+                }
+
+                // Enumerate children of the child visual object.
+                EnumVisual(childVisual);
+            }
+        }
     }
 }

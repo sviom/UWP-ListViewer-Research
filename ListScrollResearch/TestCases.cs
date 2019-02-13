@@ -15,7 +15,20 @@ namespace ListScrollResearch
     {
         public static int _testCount { get; set; } = 30;
 
-        private List<DateGroup> _dateGroupList;
+        public static List<DateGroup> _dateGroupList;
+
+        public static ObservableCollection<DateGroup> _dateGroupObservable
+        {
+            get
+            {
+                var test = new ObservableCollection<DateGroup>();
+                foreach (var item in _dateGroupList)
+                {
+                    test.Add(item);
+                }
+                return test;
+            }
+        }
 
         public DateCollection()
         {

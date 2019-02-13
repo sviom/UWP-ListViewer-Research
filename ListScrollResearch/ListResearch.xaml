@@ -59,7 +59,7 @@
             <TextBlock x:Name="NowCount" Style="{StaticResource SubtitleTextBlockStyle}"
                    VerticalAlignment="Bottom"></TextBlock>
         </Border>
-        <ListView x:Name="NowRenderedListView"  Grid.Row="4">
+        <ListView x:Name="NowRenderedListView"  Grid.Row="4" ItemsSource="{x:Bind NowRenderedList}">
             <!--ItemsSource="{x:Bind NowRenderedList}"-->
             <ListView.ItemTemplate>
                 <DataTemplate>

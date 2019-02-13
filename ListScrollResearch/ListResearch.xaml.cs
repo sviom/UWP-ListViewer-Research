@@ -38,22 +38,13 @@ namespace ListScrollResearch
         {
             this.InitializeComponent();
 
-            //RefreshCollction();
-
             var ss = new IncrementalLoadingCollection<DateCollection, DateGroup>();
 
+            DateTests = DateCollection._dateGroupObservable;
+            TestListViewCollection.Source = DateTests;
+            ////NowRenderedListView.ItemsSource = ss;
             //TestListViewCollection.Source = DateTests;
-            //NowRenderedListView.ItemsSource = ss;
-            TestListViewCollection.Source = ss;
-            //SetGridViewTestData(DateTests);
-
-            DataContext = ss;
-        }
-
-        private async void RefreshCollction()
-        {
-            var ff = (IncrementalLoadingCollection<DateCollection, DateGroup>)TestListViewCollection.Source;
-            await ff.RefreshAsync();
+            SetGridViewTestData(DateTests);
         }
 
         /// <summary>
@@ -80,8 +71,8 @@ namespace ListScrollResearch
             var ss4 = args.ItemIndex;                       // Data의 Index
             var ss5 = args.Phase;
 
-            //CheckRecycleRenderedList(ss1, ss2, ss3);        // Now Rendered list
-            //OnlyDisplayedHeaderItem();
+            CheckRecycleRenderedList(ss1, ss2, ss3);        // Now Rendered list
+            OnlyDisplayedHeaderItem();
         }
 
         /// <summary>

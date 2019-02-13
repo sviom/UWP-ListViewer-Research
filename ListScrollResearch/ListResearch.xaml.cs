@@ -29,7 +29,7 @@ namespace ListScrollResearch
     public sealed partial class ListResearch : Page
     {
         public ObservableCollection<DateGroup> DateTests { get; set; }
-        public ObservableCollection<DateTest> NowRenderedList { get; set; } = new ObservableCollection<DateTest>();
+        public ObservableCollection<DateItem> NowRenderedList { get; set; } = new ObservableCollection<DateItem>();
 
         public List<ListViewHeaderItem> AllListViewHeaderItems { get; set; } = new List<ListViewHeaderItem>();
         public List<ListViewHeaderItem> DisplayedHeaderItems { get; set; } = new List<ListViewHeaderItem>();
@@ -38,9 +38,22 @@ namespace ListScrollResearch
         {
             this.InitializeComponent();
 
-            DateTests = new DateTest().SetInitData();
-            TestListViewCollection.Source = DateTests;
-            SetGridViewTestData(DateTests);
+            //RefreshCollction();
+
+            var ss = new IncrementalLoadingCollection<DateCollection, DateGroup>();
+
+            //TestListViewCollection.Source = DateTests;
+            //NowRenderedListView.ItemsSource = ss;
+            TestListViewCollection.Source = ss;
+            //SetGridViewTestData(DateTests);
+
+            DataContext = ss;
+        }
+
+        private async void RefreshCollction()
+        {
+            var ff = (IncrementalLoadingCollection<DateCollection, DateGroup>)TestListViewCollection.Source;
+            await ff.RefreshAsync();
         }
 
         /// <summary>
@@ -62,13 +75,13 @@ namespace ListScrollResearch
         {
             var ss = args.Handled;                          // 현재 ContainerContentChanging을 수동으로 조작할지 여부
             var ss1 = args.InRecycleQueue;                  // 표기 여부(재활용, 화면에 표기할지 숨길지)
-            var ss2 = args.Item as DateTest;                // 실제 Data
+            var ss2 = args.Item as DateItem;                // 실제 Data
             var ss3 = args.ItemContainer as ListViewItem;   // Data를 담고 있는 Container
             var ss4 = args.ItemIndex;                       // Data의 Index
             var ss5 = args.Phase;
 
-            CheckRecycleRenderedList(ss1, ss2, ss3);        // Now Rendered list
-            OnlyDisplayedHeaderItem();
+            //CheckRecycleRenderedList(ss1, ss2, ss3);        // Now Rendered list
+            //OnlyDisplayedHeaderItem();
         }
 
         /// <summary>
@@ -76,7 +89,7 @@ namespace ListScrollResearch
         /// </summary>
         /// <param name="isRecycle"></param>
         /// <param name="dateTest"></param>
-        public void CheckRecycleRenderedList(bool isRecycle, DateTest dateTest, ListViewItem nowItem)
+        public void CheckRecycleRenderedList(bool isRecycle, DateItem dateTest, ListViewItem nowItem)
         {
             if (isRecycle)      // 다시 가상화 되는 상태
             {
@@ -91,7 +104,7 @@ namespace ListScrollResearch
 
             // PointerWheelChagnedEvent 가 발생하지 않으므로 Container에서 검색해서 Index가 ItemSource의 Count와 같으면 맨 끝으로 간주
             var renderedLastItem = NowRenderedList.OrderBy(x => x.Name).LastOrDefault();
-            var endItem = DateTests.LastOrDefault().LastOrDefault() as DateTest;
+            var endItem = DateTests.LastOrDefault().LastOrDefault() as DateItem;
             if (renderedLastItem == endItem)
             {
                 //AddNewData();
@@ -155,12 +168,12 @@ namespace ListScrollResearch
 
             for (int i = 0; i < 100; i++)
             {
-                addedData.Add(new DateTest() { Name = "new_test_" + i, Date = DateTime.Now.AddDays(1) });
-                addedBeforeData.Add(new DateTest() { Name = "new_before_test_" + i, Date = DateTime.Now.AddDays(1) });
+                addedData.Add(new DateItem() { Name = "new_test_" + i, Date = DateTime.Now.AddDays(1) });
+                addedBeforeData.Add(new DateItem() { Name = "new_before_test_" + i, Date = DateTime.Now.AddDays(1) });
             }
 
-            DateTest.TestCasesGroup.Add(addedData);
-            DateTest.TestCasesGroup.Insert(0, addedBeforeData);
+            //DateCollection.TestCasesGroup.Add(addedData);
+            //DateCollection.TestCasesGroup.Insert(0, addedBeforeData);
         }
 
         #region GridView 영역

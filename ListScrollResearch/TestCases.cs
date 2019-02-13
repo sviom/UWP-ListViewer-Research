@@ -5,23 +5,27 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
 namespace ListScrollResearch
 {
-    public class DateTest : INotifyCollectionChanged
+    public class DateCollection : IIncrementalSource<DateGroup>
     {
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public static int _testCount { get; set; } = 30;
 
-        private int _testCount = 3000;
+        private List<DateGroup> _dateGroupList;
 
-        public static ObservableCollection<DateGroup> TestCasesGroup = new ObservableCollection<DateGroup>();
-
-        public static List<DateTest> RawTestCases = new List<DateTest>();
-
-        public ObservableCollection<DateGroup> SetInitData()
+        public DateCollection()
         {
+            SetInitData();
+        }
+
+        public List<DateGroup> SetInitData()
+        {
+            _dateGroupList = new List<DateGroup>();
+
             DateGroup now = new DateGroup
             {
                 Key = DateTime.Now.ToString(),
@@ -44,51 +48,82 @@ namespace ListScrollResearch
             {
                 if (i < (_testCount / 3))
                 {
-                    before.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now.AddDays(-1) });
-                    RawTestCases.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now.AddDays(-1) });
+                    before.Add(new DateItem() { Name = "test_" + i, Date = DateTime.Now.AddDays(-1) });
                 }
                 else if (i > (_testCount / 3 - 1) && i < (_testCount / 2))
                 {
-                    now.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now });
-                    RawTestCases.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now });
+                    now.Add(new DateItem() { Name = "test_" + i, Date = DateTime.Now });
                 }
                 else
                 {
-                    after.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now.AddDays(1) });
-                    RawTestCases.Add(new DateTest() { Name = "test_" + i, Date = DateTime.Now.AddDays(1) });
+                    after.Add(new DateItem() { Name = "test_" + i, Date = DateTime.Now.AddDays(1) });
                 }
             }
 
-            TestCasesGroup.Add(before);
-            TestCasesGroup.Add(now);
-            TestCasesGroup.Add(after);
+            _dateGroupList.Add(before);
+            _dateGroupList.Add(now);
+            _dateGroupList.Add(after);
 
-            return TestCasesGroup;
+            return _dateGroupList;
         }
 
+        /// <summary>
+        /// 아이템 더 가져오기
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<DateGroup>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default)
+        {
+            var addedList = new List<DateGroup>();
+            DateGroup addedBeforeData = new DateGroup
+            {
+                Key = DateTime.Now.AddDays(-2).ToString()
+            };
+            DateGroup addedData = new DateGroup
+            {
+                Key = DateTime.Now.AddDays(2).ToString()
+            };
 
-        public DateTimeOffset Date { get; set; }
-        public string Name { get; set; }
+            for (int i = 0; i < 10; i++)
+            {
+                addedData.Add(new DateItem() { Name = "new_test_" + i, Date = DateTime.Now.AddDays(1) });
+                addedBeforeData.Add(new DateItem() { Name = "new_before_test_" + i, Date = DateTime.Now.AddDays(1) });
+            }
+
+            addedList.Add(addedData);
+            addedList.Insert(0, addedBeforeData);
+
+            // 추가되는 시간 설정(UX?)
+            if (pageIndex == 0)
+                await Task.Delay(500);
+            else
+                await Task.Delay(500);
+
+            IEnumerable<DateGroup> addedEnumerable = addedList;
+            return addedEnumerable;
+        }
     }
 
     /*
      * [Data Structure]
      * DateGroup List<object>
-	    - Key(*DateTest-Date와 일치해야 Group화 가능)
-		    ○ DateTest
+	    - Key(*DateItem-Date와 일치해야 Group화 가능)
+		    ○ DateItem
 			    § Name
 			    § Date(*Key와 일치해야 함)
-            ○ DateTest
+            ○ DateItem
 			    § Name
 			    § Date(*Key와 일치해야 함)
-            ○ DateTest
+            ○ DateItem
 			    § Name
 			    § Date(*Key와 일치해야 함)
-        - Key(*DateTest-Date와 일치해야 Group화 가능)
-		    ○ DateTest
+        - Key(*DateItem-Date와 일치해야 Group화 가능)
+		    ○ DateItem
 			    § Name
 			    § Date(*Key와 일치해야 함)
-            ○ DateTest
+            ○ DateItem
 			    § Name
 			    § Date(*Key와 일치해야 함)
      */
@@ -97,5 +132,10 @@ namespace ListScrollResearch
         public object Key { get; set; }
         public string GroupName { get; set; }
         public DateTimeOffset GroupHeader { get; set; }
+    }
+    public class DateItem
+    {
+        public DateTimeOffset Date { get; set; }
+        public string Name { get; set; }
     }
 }

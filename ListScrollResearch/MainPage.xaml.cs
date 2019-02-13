@@ -29,6 +29,17 @@ namespace ListScrollResearch
 
         private void ListPageMove_Click(object sender, RoutedEventArgs e)
         {
+            int count = 30;
+            if (string.IsNullOrEmpty(SettingTestCount.Text))
+                count = 30;
+            else
+                count = Convert.ToInt32(SettingTestCount.Text);
+
+            if (count < 0)
+                count = 10;
+
+            DateCollection._testCount = count;
+
             this.Frame.Navigate(typeof(ListResearch));
         }
     }

@@ -31,7 +31,7 @@
                   Grid.Row="1"
                   ContainerContentChanging="TestListView_ContainerContentChanging">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:DateTest">
+                <DataTemplate x:DataType="local:DateItem">
                     <StackPanel>
                         <!--<TextBlock Text="{Binding Date}"></TextBlock>-->
                         <TextBlock Text="{Binding Name}"></TextBlock>
@@ -58,8 +58,9 @@
         <Border BorderBrush="Black" BorderThickness="0,0,0,1" Grid.Row="3">
             <TextBlock x:Name="NowCount" Style="{StaticResource SubtitleTextBlockStyle}"
                    VerticalAlignment="Bottom"></TextBlock>
-        </Border>        
-        <ListView ItemsSource="{x:Bind NowRenderedList}" Grid.Row="4">
+        </Border>
+        <ListView x:Name="NowRenderedListView"  Grid.Row="4">
+            <!--ItemsSource="{x:Bind NowRenderedList}"-->
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"></TextBlock>

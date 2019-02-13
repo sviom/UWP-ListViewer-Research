@@ -39,12 +39,22 @@ namespace ListScrollResearch
             this.InitializeComponent();
 
             var ss = new IncrementalLoadingCollection<DateCollection, DateGroup>();
-
             DateTests = DateCollection._dateGroupObservable;
             TestListViewCollection.Source = DateTests;
-            ////NowRenderedListView.ItemsSource = ss;
-            //TestListViewCollection.Source = DateTests;
             SetGridViewTestData(DateTests);
+        }
+
+        public void SetTodayScroll()
+        {
+            var now = DateTimeOffset.Now;
+            foreach (var item in TestListView.Items)
+            {
+                var dateItem = item as DateItem;
+                if (dateItem.Date == now)
+                {
+                    TestListView.SelectedItem = item;
+                }
+            }
         }
 
         /// <summary>

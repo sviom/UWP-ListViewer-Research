@@ -214,9 +214,10 @@ namespace ListScrollResearch
                 }
 
                 // 재귀호출
-                var tempList = FindChildrenElementList(child, ref returnList);
-                if (tempList.Count > 0)
+                if (returnList.Count > 0)
                     break;
+                else
+                    FindChildrenElementList(child, ref returnList);
             }
 
             return returnList;

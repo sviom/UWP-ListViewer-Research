@@ -22,8 +22,6 @@ namespace ListScrollResearch
 
         public ObservableCollection<DateGroup> SetInitData()
         {
-            
-
             DateGroup now = new DateGroup
             {
                 Key = DateTime.Now.ToString(),
@@ -74,10 +72,23 @@ namespace ListScrollResearch
     }
 
     /*
-     * 
+     * [Data Structure]
      * DateGroup List<object>
 	    - Key(*DateTest-Date와 일치해야 Group화 가능)
 		    ○ DateTest
+			    § Name
+			    § Date(*Key와 일치해야 함)
+            ○ DateTest
+			    § Name
+			    § Date(*Key와 일치해야 함)
+            ○ DateTest
+			    § Name
+			    § Date(*Key와 일치해야 함)
+        - Key(*DateTest-Date와 일치해야 Group화 가능)
+		    ○ DateTest
+			    § Name
+			    § Date(*Key와 일치해야 함)
+            ○ DateTest
 			    § Name
 			    § Date(*Key와 일치해야 함)
      */

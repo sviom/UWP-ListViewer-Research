@@ -31,7 +31,6 @@ namespace ListScrollResearch
         public ObservableCollection<DateGroup> DateTests { get; set; }
         public ObservableCollection<DateTest> NowRenderedList { get; set; } = new ObservableCollection<DateTest>();
 
-        public List<ListViewItem> RenderedItemList = new List<ListViewItem>();
         public List<ListViewHeaderItem> AllListViewHeaderItems { get; set; } = new List<ListViewHeaderItem>();
         public List<ListViewHeaderItem> DisplayedHeaderItems { get; set; } = new List<ListViewHeaderItem>();
 
@@ -44,32 +43,36 @@ namespace ListScrollResearch
             SetGridViewTestData(DateTests);
         }
 
+        /// <summary>
+        /// 메인페이지로 이동
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BackToMain_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(MainPage));
         }
 
         /// <summary>
-        /// Content가 추가로 로딩될 때
+        /// TestListView에서 Content가 추가로 로딩될 때
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
         private void TestListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            var ss = args.Handled;
-            var ss1 = args.InRecycleQueue;
-            var ss2 = args.Item as DateTest;
-            var ss3 = args.ItemContainer as ListViewItem;
-            var ss4 = args.ItemIndex;
+            var ss = args.Handled;                          // 현재 ContainerContentChanging을 수동으로 조작할지 여부
+            var ss1 = args.InRecycleQueue;                  // 표기 여부(재활용, 화면에 표기할지 숨길지)
+            var ss2 = args.Item as DateTest;                // 실제 Data
+            var ss3 = args.ItemContainer as ListViewItem;   // Data를 담고 있는 Container
+            var ss4 = args.ItemIndex;                       // Data의 Index
             var ss5 = args.Phase;
 
-            CheckRecycleRenderedList(ss1, ss2, ss3);            // Now Rendered list
-
+            CheckRecycleRenderedList(ss1, ss2, ss3);        // Now Rendered list
             OnlyDisplayedHeaderItem();
         }
 
         /// <summary>
-        /// 실제 동작함
+        /// 현재 Render 되어 있는 ListViewItem을 별도의 ListView에 표기
         /// </summary>
         /// <param name="isRecycle"></param>
         /// <param name="dateTest"></param>
@@ -78,12 +81,10 @@ namespace ListScrollResearch
             if (isRecycle)      // 다시 가상화 되는 상태
             {
                 NowRenderedList.Remove(dateTest);
-                RenderedItemList.Remove(nowItem);
             }
             else
             {
                 NowRenderedList.Add(dateTest);
-                RenderedItemList.Add(nowItem);
             }
 
             NowCount.Text = "Now rendered items count : " + NowRenderedList.Count.ToString();
@@ -98,18 +99,50 @@ namespace ListScrollResearch
         }
 
         /// <summary>
+        /// 현재 화면에 보이고 있는 ListViewHeaderItem 표시
+        /// </summary>
+        public void OnlyDisplayedHeaderItem()
+        {
+            // 초기화
+            AllListViewHeaderItems = new List<ListViewHeaderItem>();
+            DisplayedHeaderItems = new List<ListViewHeaderItem>();
+            ContentChangeTest.Text = "";
+
+            var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
+            var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
+
+            // ScrollView의 자식 Component 찾기
+            List<ListViewHeaderItem> childrenElements = new List<ListViewHeaderItem>();
+            FindChildrenElementList(_scrollViewer, ref childrenElements);
+            AllListViewHeaderItems = childrenElements;
+
+            // ListViewHeaderItem의 상태 파악 후 표기할 항목 정리
+            foreach (var item in AllListViewHeaderItems)
+            {
+                if (item.RenderTransform is MatrixTransform)
+                {
+                    DisplayedHeaderItems.Remove(item);
+                }
+                else if (item.RenderTransform is CompositeTransform)
+                {
+                    DisplayedHeaderItems.Add(item);
+                }
+            }
+
+            ContentChangeTest.Text += "Now Top header : ";
+            foreach (var item in DisplayedHeaderItems)
+            {
+                var visibleHeader = FindChildrendElement<TextBlock>(item);
+                ContentChangeTest.Text += visibleHeader?.Text;
+            }
+        }
+
+        /// <summary>
         /// 나중에 데이터 더 추가하기 테스트
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void AddData_Click(object sender, RoutedEventArgs e)
-        {
-            AddNewData();
-
-            //DateTest.TestCasesGroup = DateTest.TestCasesGroup.OrderBy(x=>);
-        }
-
-        private void AddNewData()
         {
             DateGroup addedBeforeData = new DateGroup
             {
@@ -130,49 +163,7 @@ namespace ListScrollResearch
             DateTest.TestCasesGroup.Insert(0, addedBeforeData);
         }
 
-        public void OnlyDisplayedHeaderItem()
-        {
-            AllListViewHeaderItems = new List<ListViewHeaderItem>();
-            DisplayedHeaderItems = new List<ListViewHeaderItem>();
-            ContentChangeTest.Text = "";
-
-            var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
-            var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
-
-            // ScrollView의 자식 Component 찾기
-            List<ListViewHeaderItem> childrenElements = new List<ListViewHeaderItem>();
-            FindChildrenElementList(_scrollViewer, ref childrenElements);
-            AllListViewHeaderItems = childrenElements;
-
-            foreach (var item in AllListViewHeaderItems)
-            {
-                if (item.RenderTransform is MatrixTransform)
-                {
-                    DisplayedHeaderItems.Remove(item);
-                }
-                else if (item.RenderTransform is CompositeTransform)
-                {
-                    DisplayedHeaderItems.Add(item);
-                }
-            }
-
-            foreach (var item in DisplayedHeaderItems)
-            {
-                var ss = FindChildrendElement<TextBlock>(item);
-                ContentChangeTest.Text += ss?.Text + " / ";
-            }
-        }
-
-        private void NowTopItem_Click(object sender, RoutedEventArgs e)
-        {
-            OnlyDisplayedHeaderItem();
-        }
-
         #region GridView 영역
-        private void OtherControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var aa = sender as GridViewItem;
-        }
 
         /// <summary>
         /// 그리드 뷰에 Group Header만 추가
@@ -233,7 +224,7 @@ namespace ListScrollResearch
         {
             T reValue = null;
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parentObject); i++)
-            {                
+            {
                 DependencyObject child = VisualTreeHelper.GetChild(parentObject, i);
 
                 if (child is T wantedTypeItem)

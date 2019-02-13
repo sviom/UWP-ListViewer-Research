@@ -8,7 +8,10 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel>
-        <Button x:Name="ListPageMove" Click="ListPageMove_Click">List page move</Button>
+    <StackPanel Padding="20,10,0,0">
+        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,10">
+            ListView Research
+        </TextBlock>
+        <Button x:Name="ListPageMove" Click="ListPageMove_Click">Move to Test page</Button>
     </StackPanel>
 </Page>

@@ -12,18 +12,23 @@
         <CollectionViewSource x:Name="TestListViewCollection" IsSourceGrouped="True"></CollectionViewSource>
     </Page.Resources>
 
-    <Grid>
+    <Grid Padding="20,10,20,0">
         <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="0.5*"></RowDefinition>
+            <RowDefinition Height="0.5*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="0.5*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
-        
+
+        <Border BorderBrush="Black" BorderThickness="0,0,0,1" Grid.Row="0">
+            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                   VerticalAlignment="Bottom">Main list</TextBlock>
+        </Border>
         <ListView x:Name="TestListView" ItemsSource="{x:Bind TestListViewCollection.View}"
-                  Grid.Row="0"
+                  Grid.Row="1"
                   ContainerContentChanging="TestListView_ContainerContentChanging">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:DateTest">
@@ -44,21 +49,28 @@
                 </GroupStyle>
             </ListView.GroupStyle>
         </ListView>
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
             <Button x:Name="BackToMain" Click="BackToMain_Click" Margin="0,0,20,0">Back to Main page</Button>
             <Button x:Name="AddData" Click="AddData_Click" Margin="0,0,20,0">Add data</Button>
-            <Button x:Name="NowTopItem" Click="NowTopItem_Click" Margin="0,0,20,0">Now Top item</Button>
-            <TextBlock x:Name="ContentChangeTest"></TextBlock>
+            <TextBlock x:Name="ContentChangeTest" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
         </StackPanel>
-        
-        <ListView ItemsSource="{x:Bind NowRenderedList}" Grid.Row="3">
+
+        <Border BorderBrush="Black" BorderThickness="0,0,0,1" Grid.Row="3">
+            <TextBlock x:Name="NowCount" Style="{StaticResource SubtitleTextBlockStyle}"
+                   VerticalAlignment="Bottom"></TextBlock>
+        </Border>        
+        <ListView ItemsSource="{x:Bind NowRenderedList}" Grid.Row="4">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"></TextBlock>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <TextBlock x:Name="NowCount" Grid.Row="4"></TextBlock>
-        <GridView x:Name="OtherControl" Grid.Row="5"></GridView>
+
+        <Border BorderBrush="Black" BorderThickness="0,0,0,1" Grid.Row="5">
+            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                   VerticalAlignment="Bottom">Other control</TextBlock>
+        </Border>
+        <GridView x:Name="OtherControl" Grid.Row="6"></GridView>
     </Grid>
 </Page>

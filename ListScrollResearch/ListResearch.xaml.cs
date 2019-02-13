@@ -139,7 +139,10 @@ namespace ListScrollResearch
             var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
             var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
 
-            EnumVisual(_scrollViewer);      // ScrollView의 자식 Component 찾기
+            // ScrollView의 자식 Component 찾기
+            List<ListViewHeaderItem> childrenElements = new List<ListViewHeaderItem>();
+            FindChildrenElementList(_scrollViewer, ref childrenElements);
+            AllListViewHeaderItems = childrenElements;
 
             foreach (var item in AllListViewHeaderItems)
             {
@@ -155,9 +158,9 @@ namespace ListScrollResearch
 
             foreach (var item in DisplayedHeaderItems)
             {
-                var ss = EnumVisual<TextBlock>(item);
+                var ss = FindChildrendElement<TextBlock>(item);
                 ContentChangeTest.Text += ss?.Text + " / ";
-            }            
+            }
         }
 
         private void NowTopItem_Click(object sender, RoutedEventArgs e)
@@ -188,47 +191,58 @@ namespace ListScrollResearch
         }
         #endregion
 
-        // Enumerate all the descendants of the visual object.
-        public void EnumVisual(DependencyObject myVisual)
+        /// <summary>
+        /// Parent에서 원하는 형식(T)의 자식 리스트 찾기
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parentObject"></param>
+        /// <returns></returns>
+        public List<T> FindChildrenElementList<T>(DependencyObject parentObject, ref List<T> returnList) where T : FrameworkElement
         {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(myVisual); i++)
+            // 자식 검색
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parentObject); i++)
             {
-                // Retrieve child visual at specified index value.
-                DependencyObject childVisual = VisualTreeHelper.GetChild(myVisual, i);
-
-                // Do processing of the child visual object.
-                if (childVisual is ListViewHeaderItem headerItem)
+                DependencyObject child = VisualTreeHelper.GetChild(parentObject, i);
+                if (child is T wantedTypeItem)
                 {
-                    if(!AllListViewHeaderItems.Contains(headerItem))
-                        AllListViewHeaderItems.Add(headerItem);
+                    // List에 포함되어 있지 않은 경우에만
+                    if (!returnList.Contains(wantedTypeItem))
+                    {
+                        returnList.Add(wantedTypeItem);
+                        return returnList;
+                    }
                 }
 
-                // Enumerate children of the child visual object.
-                EnumVisual(childVisual);
-            }
-        }
-
-        public T EnumVisual<T>(DependencyObject myVisual) where T: class
-        {
-            T reValue = null;
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(myVisual); i++)
-            {
-                // Retrieve child visual at specified index value.
-                DependencyObject childVisual = VisualTreeHelper.GetChild(myVisual, i);
-
-                // Do processing of the child visual object.
-                if (childVisual is T headerItem)
-                {
-                    return headerItem;
-                }
-
-                // Enumerate children of the child visual object.
-                reValue = EnumVisual<T>(childVisual);
-                if (reValue != null)
+                // 재귀호출
+                var tempList = FindChildrenElementList(child, ref returnList);
+                if (tempList.Count > 0)
                     break;
             }
 
+            return returnList;
+        }
+
+        /// <summary>
+        /// FrameWork Element에서 원하는 형식의 Child 찾아서 단일 항목 리턴
+        /// </summary>
+        /// <typeparam name="T">원하는 형식의 Framework element(ex. TextBlock)</typeparam>
+        /// <param name="parentObject"></param>
+        /// <returns></returns>
+        public T FindChildrendElement<T>(DependencyObject parentObject) where T : FrameworkElement
+        {
+            T reValue = null;
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parentObject); i++)
+            {                
+                DependencyObject child = VisualTreeHelper.GetChild(parentObject, i);
+
+                if (child is T wantedTypeItem)
+                    return wantedTypeItem;
+
+                // 재귀호출
+                reValue = FindChildrendElement<T>(child);
+                if (reValue != null)
+                    break;
+            }
             return reValue;
         }
     }

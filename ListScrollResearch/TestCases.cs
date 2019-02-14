@@ -151,7 +151,7 @@ namespace ListScrollResearch
 
             for (int i = 0; i < pageSize; i++)
             {
-                addedGroup.Add(new DateItem() { Name = "new_test_" + i, Date = addedOffset });
+                addedGroup.Add(new DateItem() { Name = "new_test_" + i + "_" + addedOffset.Date.ToString("yyMMdd"), Date = addedOffset });
             }
 
             returnList.Add(addedGroup);

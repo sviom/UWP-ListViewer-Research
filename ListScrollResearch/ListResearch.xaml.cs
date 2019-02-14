@@ -106,7 +106,7 @@ namespace ListScrollResearch
                 if (dateItem.Date.Date == now.Date)
                 {
                     TestListView.SelectedItem = item;
-                    TestListView.ScrollIntoView(item);
+                    TestListView.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
                     break;
                 }
             }

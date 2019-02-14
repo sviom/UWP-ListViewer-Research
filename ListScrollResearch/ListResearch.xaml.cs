@@ -70,27 +70,28 @@ namespace ListScrollResearch
             if (scrollableHeight == 0)
                 return;
 
-            var topScope = scrollableHeight * 0.05;         // 이전의 자료를 가져오기 위한 범위
-            var bottomScope = scrollableHeight * 0.95;      // 이후의 자료를 가져오기 위한 범위
+            int scope = 50;
+            var topScope = scope;                       // 이전의 자료를 가져오기 위한 범위
+            var bottomScope = scrollableHeight - scope; // 이후의 자료를 가져오기 위한 범위
 
             // 해당 범위 안에 들어갔을 경우 데이터를 가져온다. 현재는 무제한으로.
             if (verticalOffset < topScope && !IsTopScrolled)
             {
-                var newDateGroup = DateCollection.GetMoreItems(0, 20, DateTests, nextDirection: false);
+                var newDateGroup = DateCollection.GetMoreItems(0, 10, DateTests, nextDirection: false);
                 DateTests.Insert(0, newDateGroup);
                 IsTopScrolled = true;
             }
             else if (verticalOffset > bottomScope && !IsBottomScrolled)
             {
-                var newDateGroup = DateCollection.GetMoreItems(DateTests.Count - 1, 20, DateTests, nextDirection: true);
+                var newDateGroup = DateCollection.GetMoreItems(DateTests.Count - 1, 10, DateTests, nextDirection: true);
                 DateTests.Add(newDateGroup);
                 IsBottomScrolled = true;
             }
 
             // 맨 위로 가거나 맨 아래로 가면 다시 자료를 가져오게 만들어야 함
-            if (verticalOffset == 0)
+            if (verticalOffset < topScope && IsTopScrolled)
                 IsTopScrolled = false;
-            else if (verticalOffset == scrollableHeight)
+            else if (verticalOffset > bottomScope && IsBottomScrolled)
                 IsBottomScrolled = false;
         }
 

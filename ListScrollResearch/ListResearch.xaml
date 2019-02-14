@@ -29,7 +29,8 @@
         </Border>
         <ListView x:Name="TestListView" ItemsSource="{x:Bind TestListViewCollection.View}"
                   Grid.Row="1"
-                  ContainerContentChanging="TestListView_ContainerContentChanging">
+                  ContainerContentChanging="TestListView_ContainerContentChanging"
+                  Loaded="TestListView_Loaded">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:DateItem">
                     <StackPanel>

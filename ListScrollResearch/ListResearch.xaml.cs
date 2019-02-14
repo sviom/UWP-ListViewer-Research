@@ -44,15 +44,70 @@ namespace ListScrollResearch
             SetGridViewTestData(DateTests);
         }
 
+        private void TestListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetTodayScroll();
+
+            var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
+            var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
+            _scrollViewer.ViewChanged += _scrollViewer_ViewChanged;
+        }
+
+        public bool IsTopScrolled { get; set; } = false;
+        public bool IsBottomScrolled { get; set; } = false;
+
+        /// <summary>
+        /// ListView가 Scroll이 될 때의 동작 정의
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _scrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            var nowScrollViewer = sender as ScrollViewer;
+            var scrollableHeight = nowScrollViewer.ScrollableHeight;
+            var verticalOffset = nowScrollViewer.VerticalOffset;
+
+            if (scrollableHeight == 0)
+                return;
+
+            var topScope = scrollableHeight * 0.05;         // 이전의 자료를 가져오기 위한 범위
+            var bottomScope = scrollableHeight * 0.95;      // 이후의 자료를 가져오기 위한 범위
+
+            // 해당 범위 안에 들어갔을 경우 데이터를 가져온다. 현재는 무제한으로.
+            if (verticalOffset < topScope && !IsTopScrolled)
+            {
+                var newDateGroup = DateCollection.GetMoreItems(0, 20, DateTests, nextDirection: false);
+                DateTests.Insert(0, newDateGroup);
+                IsTopScrolled = true;
+            }
+            else if (verticalOffset > bottomScope && !IsBottomScrolled)
+            {
+                var newDateGroup = DateCollection.GetMoreItems(DateTests.Count - 1, 20, DateTests, nextDirection: true);
+                DateTests.Add(newDateGroup);
+                IsBottomScrolled = true;
+            }
+
+            // 맨 위로 가거나 맨 아래로 가면 다시 자료를 가져오게 만들어야 함
+            if (verticalOffset == 0)
+                IsTopScrolled = false;
+            else if (verticalOffset == scrollableHeight)
+                IsBottomScrolled = false;
+        }
+
+        /// <summary>
+        /// 맨 처음 들어왔을 때 오늘 날짜로 세팅
+        /// </summary>
         public void SetTodayScroll()
         {
             var now = DateTimeOffset.Now;
             foreach (var item in TestListView.Items)
             {
                 var dateItem = item as DateItem;
-                if (dateItem.Date == now)
+                if (dateItem.Date.Date == now.Date)
                 {
                     TestListView.SelectedItem = item;
+                    TestListView.ScrollIntoView(item);
+                    break;
                 }
             }
         }
@@ -124,6 +179,8 @@ namespace ListScrollResearch
 
             var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
             var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
+
+            var aaass = _scrollViewer.ScrollableHeight;
 
             // ScrollView의 자식 Component 찾기
             List<ListViewHeaderItem> childrenElements = new List<ListViewHeaderItem>();

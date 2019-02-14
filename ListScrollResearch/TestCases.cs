@@ -117,6 +117,47 @@ namespace ListScrollResearch
             IEnumerable<DateGroup> addedEnumerable = addedList;
             return addedEnumerable;
         }
+
+        /// <summary>
+        /// 이전 또는 다음 자료 가져오기
+        /// </summary>
+        /// <param name="pageIndex">어디다가 넣을 것인지에 대한 위치 값</param>
+        /// <param name="pageSize">한번에 가져올 양</param>
+        /// <param name="nextDirection">이전 자료인지 다음자료인지 판별, 기본적으로 밑(다음) 값 가져오기</param>
+        /// <returns></returns>
+        public static DateGroup GetMoreItems
+            (int pageIndex, int pageSize, ObservableCollection<DateGroup> dateGroups, bool nextDirection = true)
+        {
+            ObservableCollection<DateGroup> returnList = new ObservableCollection<DateGroup>();
+
+            DateTimeOffset addedOffset = DateTimeOffset.Now;
+            if (nextDirection)
+            {
+                var lastGroup = dateGroups.LastOrDefault();
+                var lastItem = lastGroup.LastOrDefault() as DateItem;
+                addedOffset = lastItem.Date.AddDays(1);
+            }
+            else
+            {
+                var firstGroup = dateGroups.FirstOrDefault();
+                var firstItem = firstGroup.FirstOrDefault() as DateItem;
+                addedOffset = firstItem.Date.AddDays(-1);
+            }
+
+            DateGroup addedGroup = new DateGroup
+            {
+                Key = addedOffset.Date.ToString()
+            };
+
+            for (int i = 0; i < pageSize; i++)
+            {
+                addedGroup.Add(new DateItem() { Name = "new_test_" + i, Date = addedOffset });
+            }
+
+            returnList.Add(addedGroup);
+
+            return addedGroup;
+        }
     }
 
     /*

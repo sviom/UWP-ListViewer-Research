@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 using Newtonsoft.Json;
+using ListScrollResearch.CustomControls;
 
 // 빈 페이지 항목 템플릿에 대한 설명은 https://go.microsoft.com/fwlink/?LinkId=234238에 나와 있습니다.
 
@@ -307,19 +308,6 @@ namespace ListScrollResearch
                 contentDialog.CloseButtonText = "Close";
                 contentDialog.Content = testButton.SelectedDate.ToString();
                 await contentDialog.ShowAsync();
-            }
-        }
-    }
-
-    public class ShowDpPropertyButton : Button
-    {
-        public static readonly DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTimeOffset), typeof(ShowDpPropertyButton), new PropertyMetadata(DateTimeOffset.Now));
-        public DateTimeOffset SelectedDate
-        {
-            get { return (DateTimeOffset)GetValue(SelectedDateProperty); }
-            set
-            {
-                SetValue(SelectedDateProperty, value);
             }
         }
     }

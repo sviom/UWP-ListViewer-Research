@@ -42,19 +42,22 @@ namespace ListScrollResearch
             DateGroup now = new DateGroup
             {
                 Key = DateTime.Now.ToString(),
-                GroupName = DateTime.Now.ToString()
+                GroupName = DateTime.Now.ToString(),
+                GroupHeader = DateTime.Now
             };
 
             DateGroup before = new DateGroup
             {
                 Key = DateTime.Now.AddDays(-1).ToString(),
-                GroupName = DateTime.Now.AddDays(-1).ToString()
+                GroupName = DateTime.Now.AddDays(-1).ToString(),
+                GroupHeader = DateTime.Now.AddDays(-1)
             };
 
             DateGroup after = new DateGroup
             {
                 Key = DateTime.Now.AddDays(1).ToString(),
-                GroupName = DateTime.Now.AddDays(1).ToString()
+                GroupName = DateTime.Now.AddDays(1).ToString(),
+                GroupHeader = DateTime.Now.AddDays(1)
             };
 
             for (int i = 0; i < _testCount; i++)
@@ -92,11 +95,15 @@ namespace ListScrollResearch
             var addedList = new List<DateGroup>();
             DateGroup addedBeforeData = new DateGroup
             {
-                Key = DateTime.Now.AddDays(-2).ToString()
+                Key = DateTime.Now.AddDays(-2).ToString(),
+                GroupName = DateTime.Now.AddDays(-2).ToString(),
+                GroupHeader = DateTime.Now.AddDays(-2)
             };
             DateGroup addedData = new DateGroup
             {
-                Key = DateTime.Now.AddDays(2).ToString()
+                Key = DateTime.Now.AddDays(2).ToString(),
+                GroupName = DateTime.Now.AddDays(2).ToString(),
+                GroupHeader = DateTime.Now.AddDays(2)
             };
 
             for (int i = 0; i < 10; i++)
@@ -146,7 +153,9 @@ namespace ListScrollResearch
 
             DateGroup addedGroup = new DateGroup
             {
-                Key = addedOffset.Date.ToString()
+                Key = addedOffset.Date.ToString(),
+                GroupName = addedOffset.Date.ToString(),
+                GroupHeader = addedOffset.Date
             };
 
             for (int i = 0; i < pageSize; i++)

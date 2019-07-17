@@ -314,32 +314,28 @@ namespace ListScrollResearch
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ShowHeaderInfoButton_Click(object sender, RoutedEventArgs e)
+        private async void ListGroupHeader_Click(object sender, RoutedEventArgs e)
         {
-            var _border = VisualTreeHelper.GetChild(TestListView, 0);                   // Border
-            var _scrollViewer = VisualTreeHelper.GetChild(_border, 0) as ScrollViewer;  // ScrollViewer
-
-            // ScrollView의 자식 Component 찾기
-            List<ListViewHeaderItem> childrenElements = new List<ListViewHeaderItem>();
-            FindChildrenElementList(_scrollViewer, ref childrenElements);
-            AllListViewHeaderItems = childrenElements;
-
-            // ListViewHeaderItem의 상태 파악 후 표기할 항목 정리
-            foreach (var item in AllListViewHeaderItems)
+            if(sender is TestButton testButton)
             {
-                if (item.RenderTransform is MatrixTransform)
-                {
-                    DisplayedHeaderItems.Remove(item);
-                }
-                else if (item.RenderTransform is CompositeTransform)
-                {
-                    DisplayedHeaderItems.Add(item);
-                }
-            }
+                var contentDialog = new ContentDialog();
+                contentDialog.Title = "Selected date property value";
+                contentDialog.CloseButtonText = "Close";
+                contentDialog.Content = testButton.SelectedDate.ToString();
+                await contentDialog.ShowAsync();
+            }        
+        }
+    }
 
-            foreach (var item in DisplayedHeaderItems)
+    public class TestButton : Button
+    {
+        public static readonly DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTimeOffset), typeof(TestButton), new PropertyMetadata(DateTimeOffset.Now));
+        public DateTimeOffset SelectedDate
+        {
+            get { return (DateTimeOffset)GetValue(SelectedDateProperty); }
+            set
             {
-                var visibleHeader = FindChildrendElement<TextBlock>(item);
+                SetValue(SelectedDateProperty, value);
             }
         }
     }

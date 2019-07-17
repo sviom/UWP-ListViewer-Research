@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ListScrollResearch"
-    xmlns:UserControls="using:ListScrollResearch.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -46,8 +45,8 @@
                         <DataTemplate x:DataType="local:DateGroup">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                                 <TextBlock Text="{x:Bind Key, Mode=OneWay}"></TextBlock>
-                                <local:TestButton x:Name="ListGroupHeaderButton" SelectedDate="{x:Bind GroupHeader, Mode=OneWay}" Content="조각 추가" 
-                                                  Margin="10,0,0,0" Click="ListGroupHeader_Click" />
+                                <local:ShowDpPropertyButton x:Name="ListGroupHeaderButton" SelectedDate="{x:Bind GroupHeader, Mode=OneWay}" Content="조각 추가" 
+                                                            Margin="10,0,0,0" Click="ListGroupHeader_Click" />
                             </StackPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>

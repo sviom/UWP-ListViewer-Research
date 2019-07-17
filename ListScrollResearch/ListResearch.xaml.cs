@@ -217,11 +217,15 @@ namespace ListScrollResearch
         {
             DateGroup addedBeforeData = new DateGroup
             {
-                Key = DateTime.Now.AddDays(-2).ToString()
+                Key = DateTime.Now.AddDays(-2).ToString(),
+                GroupName = DateTime.Now.AddDays(-2).ToString(),
+                GroupHeader = DateTime.Now.AddDays(-2)
             };
             DateGroup addedData = new DateGroup
             {
-                Key = DateTime.Now.AddDays(2).ToString()
+                Key = DateTime.Now.AddDays(2).ToString(),
+                GroupName = DateTime.Now.AddDays(2).ToString(),
+                GroupHeader = DateTime.Now.AddDays(2)
             };
 
             for (int i = 0; i < 100; i++)
@@ -316,20 +320,20 @@ namespace ListScrollResearch
         /// <param name="e"></param>
         private async void ListGroupHeader_Click(object sender, RoutedEventArgs e)
         {
-            if(sender is TestButton testButton)
+            if (sender is ShowDpPropertyButton testButton)
             {
                 var contentDialog = new ContentDialog();
                 contentDialog.Title = "Selected date property value";
                 contentDialog.CloseButtonText = "Close";
                 contentDialog.Content = testButton.SelectedDate.ToString();
                 await contentDialog.ShowAsync();
-            }        
+            }
         }
     }
 
-    public class TestButton : Button
+    public class ShowDpPropertyButton : Button
     {
-        public static readonly DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTimeOffset), typeof(TestButton), new PropertyMetadata(DateTimeOffset.Now));
+        public static readonly DependencyProperty SelectedDateProperty = DependencyProperty.Register("SelectedDate", typeof(DateTimeOffset), typeof(ShowDpPropertyButton), new PropertyMetadata(DateTimeOffset.Now));
         public DateTimeOffset SelectedDate
         {
             get { return (DateTimeOffset)GetValue(SelectedDateProperty); }

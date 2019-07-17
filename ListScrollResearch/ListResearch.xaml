@@ -9,7 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <CollectionViewSource x:Name="TestListViewCollection" IsSourceGrouped="True"></CollectionViewSource>
+        <CollectionViewSource x:Name="TestListViewCollection" IsSourceGrouped="True" Source="{x:Bind DateTests, Mode=OneWay}"></CollectionViewSource>
     </Page.Resources>
 
     <Grid Padding="20,10,20,0">
@@ -44,7 +44,10 @@
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate x:DataType="local:DateGroup">
-                            <TextBlock Text="{x:Bind Key}" Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{x:Bind Key}" Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
+                                <Button x:Name="ShowHeaderInfoButton" Margin="5,0,0,0" Click="ShowHeaderInfoButton_Click">Button test</Button>
+                            </StackPanel>                            
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>

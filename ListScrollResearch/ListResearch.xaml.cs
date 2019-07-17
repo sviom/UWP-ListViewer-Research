@@ -40,7 +40,6 @@ namespace ListScrollResearch
 
             var ss = new IncrementalLoadingCollection<DateCollection, DateGroup>();
             DateTests = DateCollection._dateGroupObservable;
-            SetGridViewTestData(DateTests);
         }
 
         private void TestListView_Loaded(object sender, RoutedEventArgs e)
@@ -237,25 +236,6 @@ namespace ListScrollResearch
             //DateCollection.TestCasesGroup.Add(addedData);
             //DateCollection.TestCasesGroup.Insert(0, addedBeforeData);
         }
-
-        #region GridView 영역
-
-        /// <summary>
-        /// 그리드 뷰에 Group Header만 추가
-        /// </summary>
-        /// <param name="dateGroups"></param>
-        public void SetGridViewTestData(ObservableCollection<DateGroup> dateGroups)
-        {
-            foreach (var item in dateGroups)
-            {
-                TextBlock _block = new TextBlock
-                {
-                    Text = item.GroupName
-                };
-                OtherControl.Items.Add(_block);
-            }
-        }
-        #endregion
 
         /// <summary>
         /// Parent에서 원하는 형식(T)의 자식 리스트 찾기

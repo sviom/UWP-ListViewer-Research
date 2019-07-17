@@ -19,8 +19,6 @@
             <RowDefinition Height="0.5*"></RowDefinition>
             <RowDefinition Height="0.5*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
-            <RowDefinition Height="0.5*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Border BorderBrush="Black" BorderThickness="0,0,0,1" Grid.Row="0">
@@ -64,18 +62,11 @@
                    VerticalAlignment="Bottom"></TextBlock>
         </Border>
         <ListView x:Name="NowRenderedListView"  Grid.Row="4" ItemsSource="{x:Bind NowRenderedList}">
-            <!--ItemsSource="{x:Bind NowRenderedList}"-->
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}"></TextBlock>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <Border BorderBrush="Black" BorderThickness="0,0,0,1" Grid.Row="5">
-            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
-                   VerticalAlignment="Bottom">Other control</TextBlock>
-        </Border>
-        <GridView x:Name="OtherControl" Grid.Row="6"></GridView>
     </Grid>
 </Page>

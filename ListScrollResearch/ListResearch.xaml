@@ -13,7 +13,7 @@
         <CollectionViewSource x:Name="TestListViewCollection" IsSourceGrouped="True" Source="{x:Bind DateTests, Mode=OneWay}"></CollectionViewSource>
     </Page.Resources>
 
-    <Grid Padding="20,10,20,0">
+    <Grid Padding="20,10,20,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.5*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>

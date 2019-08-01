@@ -39,7 +39,7 @@
                     </StackPanel>
                 </Toolkit:ScrollHeader>
             </ListView.Header>
-            
+
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:DateItem">
                     <StackPanel>

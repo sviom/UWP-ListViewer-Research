@@ -54,6 +54,7 @@ namespace ListScrollResearch
 
         public bool IsTopScrolled { get; set; } = false;
         public bool IsBottomScrolled { get; set; } = false;
+        public bool IsUnlimitedData { get; set; } = false;
 
         /// <summary>
         /// ListView가 Scroll이 될 때의 동작 정의
@@ -76,15 +77,21 @@ namespace ListScrollResearch
             // 해당 범위 안에 들어갔을 경우 데이터를 가져온다. 현재는 무제한으로.
             if (verticalOffset < topScope && !IsTopScrolled)
             {
-                var newDateGroup = DateCollection.GetMoreItems(0, 10, DateTests, nextDirection: false);
-                DateTests.Insert(0, newDateGroup);
-                IsTopScrolled = true;
+                if (IsUnlimitedData)
+                {
+                    var newDateGroup = DateCollection.GetMoreItems(0, 10, DateTests, nextDirection: false);
+                    DateTests.Insert(0, newDateGroup);
+                    IsTopScrolled = true;
+                }
             }
             else if (verticalOffset > bottomScope && !IsBottomScrolled)
             {
-                var newDateGroup = DateCollection.GetMoreItems(DateTests.Count - 1, 10, DateTests, nextDirection: true);
-                DateTests.Add(newDateGroup);
-                IsBottomScrolled = true;
+                if (IsUnlimitedData)
+                {
+                    var newDateGroup = DateCollection.GetMoreItems(DateTests.Count - 1, 10, DateTests, nextDirection: true);
+                    DateTests.Add(newDateGroup);
+                    IsBottomScrolled = true;
+                }
             }
 
             // 맨 위로 가거나 맨 아래로 가면 다시 자료를 가져오게 만들어야 함
@@ -308,6 +315,20 @@ namespace ListScrollResearch
                 contentDialog.CloseButtonText = "Close";
                 contentDialog.Content = testButton.SelectedDate.ToString();
                 await contentDialog.ShowAsync();
+            }
+        }
+
+        private void EnableUnlimitedData_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsUnlimitedData)
+            {
+                IsUnlimitedData = false;
+                EnableUnlimitedData.Content = "Enable Unlimited data";
+            }
+            else
+            {
+                IsUnlimitedData = true;
+                EnableUnlimitedData.Content = "Disable Unlimited data";
             }
         }
     }

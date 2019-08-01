@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ListScrollResearch"
     xmlns:CControls="using:ListScrollResearch.CustomControls"
+    xmlns:Toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -13,7 +14,7 @@
         <CollectionViewSource x:Name="TestListViewCollection" IsSourceGrouped="True" Source="{x:Bind DateTests, Mode=OneWay}"></CollectionViewSource>
     </Page.Resources>
 
-    <Grid Padding="20,10,20,10">
+    <Grid Padding="20,20,20,20">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.5*"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
@@ -30,6 +31,15 @@
                   Grid.Row="1"
                   ContainerContentChanging="TestListView_ContainerContentChanging"
                   Loaded="TestListView_Loaded">
+            <ListView.Header>
+                <Toolkit:ScrollHeader Mode="Sticky">
+                    <StackPanel Orientation="Horizontal" Background="SkyBlue">
+                        <TextBlock VerticalAlignment="Center" Foreground="White" FontWeight="Bold" Margin="10,5,5,5">Test listview header</TextBlock>
+                        <Button VerticalAlignment="Center" Foreground="Black" Background="Azure" Margin="10,5,5,5">Test Button</Button>
+                    </StackPanel>
+                </Toolkit:ScrollHeader>
+            </ListView.Header>
+            
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:DateItem">
                     <StackPanel>
@@ -52,9 +62,10 @@
                 </GroupStyle>
             </ListView.GroupStyle>
         </ListView>
-        <StackPanel Orientation="Horizontal" Grid.Row="2">
+        <StackPanel Orientation="Horizontal" Grid.Row="2" >
             <Button x:Name="BackToMain" Click="BackToMain_Click" Margin="0,0,20,0">Back to Main page</Button>
             <Button x:Name="AddData" Click="AddData_Click" Margin="0,0,20,0">Add data</Button>
+            <Button x:Name="EnableUnlimitedData" Click="EnableUnlimitedData_Click" Margin="0,0,20,0">Enable Unlimited data</Button>
             <TextBlock x:Name="ContentChangeTest" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
         </StackPanel>
 

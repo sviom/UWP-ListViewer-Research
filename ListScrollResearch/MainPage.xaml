@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    
     <StackPanel Padding="20,10,0,0">
         <TextBlock Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,10">
             ListView Research
@@ -17,5 +17,6 @@
             <TextBox x:Name="SettingTestCount" InputScope="Number" PlaceholderText="적힌 만큼 테스트케이스를 생성합니다."></TextBox>
         </StackPanel>
         <Button x:Name="ListPageMove" Click="ListPageMove_Click" Margin="0,0,0,10">Move to Test page</Button>
+        <Button x:Name="TestPageMove" Click="TestPageMove_Click" Margin="0,0,0,10">Move to Test page</Button>
     </StackPanel>
 </Page>

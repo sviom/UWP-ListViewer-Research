@@ -42,5 +42,10 @@ namespace ListScrollResearch
 
             this.Frame.Navigate(typeof(ListResearch));
         }
+
+        private void TestPageMove_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(GridViewScrollTest));
+        }
     }
 }
